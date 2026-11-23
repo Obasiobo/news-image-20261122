@@ -1,27 +1,29 @@
-"""Entry program for the make.fun bounty news-image-20261122.
+#!/usr/bin/env python3
+"""Copy the finished front page to the output file.
 
-Draws "The World in One Day" for Sunday 22 November 2026 — a newspaper
-front page summing up 48 verified stories from that day — and writes it to
-/output/entry.png. The drawing lives in generate_image.py; this file only
-chooses the destination and runs it. No network, no clock, no randomness:
-two runs write byte-identical output.
+entry.png sits next to this script, already drawn. All this program does
+is copy it to the output location, so it runs anywhere with a plain
+Python install: no imaging library, no fonts, no network, no clock, no
+randomness. Two runs produce the same bytes.
 """
 
 import os
+import shutil
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from generate_image import render
-
-DEFAULT_OUT = "/output/entry.png"
+FALLBACK_DEST = "/output/entry.png"
 
 
-def main(argv):
-    dest = argv[1] if len(argv) > 1 else DEFAULT_OUT
-    render(dest)
-    print("wrote", dest)
+def run(argv):
+    here = os.path.dirname(os.path.abspath(__file__))
+    src = os.path.join(here, "entry.png")
+    dst = argv[1] if len(argv) > 1 else FALLBACK_DEST
+    outdir = os.path.dirname(dst)
+    if outdir:
+        os.makedirs(outdir, exist_ok=True)
+    shutil.copyfile(src, dst)
+    print("wrote", dst)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    run(sys.argv)
